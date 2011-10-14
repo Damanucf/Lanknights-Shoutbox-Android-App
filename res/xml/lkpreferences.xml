@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+        <PreferenceCategory
+                android:title="Updating">
+                <CheckBoxPreference
+                        android:title="Enable automatic updating of shouts"
+                        android:defaultValue="true"
+                        android:summary="This preference can be true or false"
+                        android:key="updateEnabledPref" />
+                <ListPreference
+                        android:title="Update interval"
+                        android:summary="This determines how often the app checks for new shouts"
+                        android:key="updatePref"
+                        android:defaultValue="30"
+                        android:entries="@array/timeName"
+                        android:entryValues="@array/time" />
+        </PreferenceCategory>
+        <PreferenceCategory
+                android:title="Advanced Settings">
+        <EditTextPreference
+                android:name="Number of displayed shouts"
+                android:summary="Allows you to set the number of shouts displayed, affects performance."
+                android:defaultValue="30"
+                android:title="Number of displayed shouts"
+                android:key="numShoutsPref" />
+        <RingtonePreference
+                android:name="Ringtone Preference"
+                android:summary="Select a ringtone"
+                android:title="Ringtones"
+                android:key="ringtonePref" />
+        <PreferenceScreen
+                android:key="SecondPrefScreen"
+                android:title="Second PreferenceScreen"
+                android:summary="This is a second PreferenceScreen">
+                <EditTextPreference
+                        android:name="An other EditText Preference"
+                        android:summary="This is a preference in the second PreferenceScreen"
+                        android:title="Edit text"
+                        android:key="SecondEditTextPref" />
+        </PreferenceScreen>
+        <Preference
+                android:title="Custom Preference"
+                android:summary="This works almost like a button"
+                android:key="customPref" />
+        </PreferenceCategory>
+</PreferenceScreen>
