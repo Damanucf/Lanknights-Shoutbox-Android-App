@@ -9,13 +9,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.http.Header;
-import org.apache.http.HeaderElement;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 
-import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -23,18 +20,18 @@ import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
-import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
-import android.widget.Toast;
 
-public class LKLogin {
+public class LKLogin implements Parcelable {
 	
-	public static String session_id;
-	public static String secure_hash;
-	public static String pass_hash;
-	public static String member_id;
+	public String session_id;
+	public String secure_hash;
+	public String pass_hash;
+	public String member_id;
 	
-	public static void ExecuteLogin(String username, String password) {
+	public void ExecuteLogin(String username, String password) {
     	//yell at me about how dumb and repetetive this segment is
 		
     	DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -96,5 +93,46 @@ public class LKLogin {
 //        	Toast.makeText(context, "ERROR: There was an IOException in HTTPPost!", duration).show();
         }
         httpclient.getConnectionManager().shutdown();
+	}
+	
+	
+	/////// Parcel stuff
+	public LKLogin(Parcel in) {
+		readFromParcel(in);
+	}
+	
+	public LKLogin() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public static final Parcelable.Creator<LKLogin> CREATOR = new Parcelable.Creator<LKLogin>() {
+		public LKLogin createFromParcel(Parcel in) {
+			return new LKLogin(in);
+		}
+		
+		public LKLogin[] newArray(int size) {
+			return new LKLogin[size];
+		}
+	};
+	
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		out.writeString(member_id);
+		out.writeString(pass_hash);
+		out.writeString(secure_hash);
+		out.writeString(session_id);
+	}
+
+	
+	public void readFromParcel(Parcel in) {
+		member_id = in.readString();
+		pass_hash = in.readString();
+		secure_hash = in.readString();
+		session_id = in.readString();
 	}
 }

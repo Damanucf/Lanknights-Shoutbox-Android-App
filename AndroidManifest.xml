@@ -13,9 +13,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+		<service android:name=".LKShoutboxService" android:process=":remote">
+			<intent-filter>
+				<action android:name="com.lanknights.shoutbox.LKShoutboxService" />
+			</intent-filter>
+		</service>
+		
 		<uses-permission android:name="android.permission.INTERNET"></uses-permission>
 		<activity android:name="LKShoutboxDisplay" android:screenOrientation="portrait"></activity>
-		<receiver android:name="AlarmReceiver"></receiver>
 		<activity android:name="LKPreferences" android:screenOrientation="portrait"></activity>
+
+		<receiver android:name="AlarmReceiver"></receiver>
+		
     </application>
 </manifest>

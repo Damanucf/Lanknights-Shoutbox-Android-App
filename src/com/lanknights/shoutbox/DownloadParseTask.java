@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import android.os.AsyncTask;
 import android.util.Log;
 
+/*
 public class DownloadParseTask extends AsyncTask<String, Void, ArrayList<Shout>> {
 	
-	/*
+	
 	private String session_id;
 	private String secure_hash;
 	
@@ -15,12 +16,12 @@ public class DownloadParseTask extends AsyncTask<String, Void, ArrayList<Shout>>
 		this.session_id = session_id;
 		this.secure_hash = secure_hash;
 	}
-	*/
+	
 	
 	@Override
-	protected ArrayList<Shout> doInBackground(String... params) {
-		 return LKShoutManager.downloadParseShouts(params[0], params[1]);
-	}
+//	protected ArrayList<Shout> doInBackground(String... params) {
+//		 return LKShoutManager.downloadParseShouts(params[0], params[1]);
+//	}
 	
 	@Override
 	protected void onPostExecute(ArrayList<Shout> result) {
@@ -33,3 +34,4 @@ public class DownloadParseTask extends AsyncTask<String, Void, ArrayList<Shout>>
 	}
 	
 }
+*/

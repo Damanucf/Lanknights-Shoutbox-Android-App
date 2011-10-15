@@ -4,12 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.security.DigestException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -21,18 +19,21 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
-import android.widget.Toast;
+//import android.widget.Toast;
 
 
 //import android.util.Log;
 
-public class LKShoutManager {
+public class LKShoutManager implements Parcelable {
 	//stores shouts format: {{int ID, string name(w/ formatting), string shout, string ID}}
 	
-	public static ArrayList<Shout> processedshouts = new ArrayList<Shout>();
-	public static int processedlast = 0;
+	public ArrayList<Shout> processedshouts = new ArrayList<Shout>();
+	public int processedlast = 0;
 	
+	/*
 	public static void UpdateShouts(String session_id, String secure_hash) {
     	HttpClient httpclient = new DefaultHttpClient();
         HttpGet httpget = new HttpGet("http://www.lanknights.net/index.php?s=" + session_id + "&app=shoutbox&module=ajax&section=coreAjax&secure_key=" + secure_hash + "&type=getShouts&lastid=" + LKShoutManager.processedlast + "&global=1");
@@ -72,14 +73,14 @@ public class LKShoutManager {
 			e.printStackTrace();
 		}
 		httpclient.getConnectionManager().shutdown();
-	}
+	}*/
 	
-	public static ArrayList<Shout> downloadParseShouts(String session_id, String secure_hash) {
+	public ArrayList<Shout> downloadParseShouts(String session_id, String secure_hash, String member_id, String pass_hash) {
 		Log.d("LKShoutbox", "Downloading and parsing shouts...");
     	HttpClient httpclient = new DefaultHttpClient();
     	//&global=1 changes the output it gives us slightly. 
-        HttpGet httpget = new HttpGet("http://www.lanknights.net/index.php?s=" + session_id + "&app=shoutbox&module=ajax&section=coreAjax&secure_key=" + secure_hash + "&type=getShouts&lastid=0&global=1");
-        httpget.setHeader("Cookie", "member_id= " + LKLogin.member_id + "; pass_hash=" + LKLogin.pass_hash + "; session_id=" + session_id + "; anonlogin=-1;");
+        HttpGet httpget = new HttpGet("http://www.lanknights.net/index.php?s=" + session_id + "&app=shoutbox&module=ajax&section=coreAjax&secure_key=" + secure_hash + "&type=getShouts&lastid=" + processedlast +"&global=1");
+        httpget.setHeader("Cookie", "member_id= " + member_id + "; pass_hash=" + pass_hash + "; session_id=" + session_id + "; anonlogin=-1;");
 
         try {
 			HttpResponse retrieve = httpclient.execute(httpget);
@@ -119,12 +120,12 @@ public class LKShoutManager {
         return null;
 
 	}
-	public static void GetShouts(String session_id, String secure_hash) {
-        new DownloadParseTask().execute(session_id, secure_hash);
+	public void GetShouts(String session_id, String secure_hash) {
+//        new DownloadParseTask().execute(session_id, secure_hash);
 	}
 	
 	//credit to "puredangertech" for this utility, modified to support the repetetive 3 matches I perform.
-	public static ArrayList<Shout> getMatches(Pattern pattern, String text) {
+	public ArrayList<Shout> getMatches(Pattern pattern, String text) {
 		ArrayList<Shout> matches = new ArrayList<Shout>();
 		Matcher m = pattern.matcher(text);
 //		int match= 0;
@@ -136,11 +137,11 @@ public class LKShoutManager {
 		return matches;
 	}
 
-	public static boolean postShout(String text, String session_id, String secure_hash) {
+	public boolean postShout(String text, String session_id, String secure_hash, String member_id, String pass_hash) {
 
     	HttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost("http://www.lanknights.net/index.php?s=" + session_id + "&app=shoutbox&module=ajax&section=coreAjax&secure_key=" + secure_hash + "&type=submit");
-        httppost.setHeader("Cookie", "meber_id=" + LKLogin.member_id + "; pass_hash=" + LKLogin.pass_hash + "; session_id=" + session_id + "; anonlogin=-1;");
+        httppost.setHeader("Cookie", "meber_id=" + member_id + "; pass_hash=" + pass_hash + "; session_id=" + session_id + "; anonlogin=-1;");
         
         try {
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
@@ -174,4 +175,41 @@ public class LKShoutManager {
 		return true;
 	}
 
+	
+	
+	public LKShoutManager(Parcel in) {
+		readFromParcel(in);
+	}
+	
+	public LKShoutManager() {
+	}
+
+	public static final Parcelable.Creator<LKShoutManager> CREATOR = new Parcelable.Creator<LKShoutManager>() {
+		public LKShoutManager createFromParcel(Parcel in) {
+			return new LKShoutManager(in);
+		}
+		
+		public LKShoutManager[] newArray(int size) {
+			return new LKShoutManager[size];
+		}
+	};
+	
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		out.writeList((List<Shout>)processedshouts);
+		out.writeInt(processedlast);	
+	}
+
+	
+	public void readFromParcel(Parcel in) {
+		// TODO rewrite this class to use List<Shout> and not ArrayList, List is implemented and more efficient
+		List<Shout> tempList = new ArrayList<Shout>();
+		in.readList(tempList, Shout.class.getClassLoader());
+		processedlast = in.readInt();
+	}
 }
